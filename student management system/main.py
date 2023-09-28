@@ -6,6 +6,10 @@ from tkinter import messagebox
 def login():
     if usernameEntry.get() == '' or passwordEntry.get() == '':
         messagebox.showerror('Error', 'All fields are required')
+    elif usernameEntry.get() == 'snow' and passwordEntry.get() == '123456':
+        messagebox.showinfo('Success', 'Login Successful')
+    else :
+        messagebox.showerror('Error', 'Invalid Username or Password')
 
 # Create the main window
 window = Tk()
