@@ -28,6 +28,34 @@ def clock():
     datetimeLabel.config(text=f'{date}\n{current_time}') 
     datetimeLabel.after(1000, clock)
 
+# Function to handle connect database button click
+def connect_database():
+    connectWindow = Toplevel()
+    connectWindow.title('Connect Database')
+    connectWindow.geometry('500x300+500+200')
+    connectWindow.resizable(False, False)
+
+    hostnameLabel = Label(connectWindow, text='Hostname', font=('Helvetica', 15, 'bold'))
+    hostnameLabel.grid(row=0, column=0, padx=10, pady=10)
+
+    hostEntry = Entry(connectWindow, font=('Helvetica', 15, 'bold'))
+    hostEntry.grid(row=0, column=1, padx=10, pady=10)
+
+    usernameLabel = Label(connectWindow, text='Username', font=('Helvetica', 15, 'bold'))
+    usernameLabel.grid(row=1, column=0, padx=10, pady=10)
+
+    userEntry = Entry(connectWindow, font=('Username', 15, 'bold'))
+    userEntry.grid(row=1, column=1, padx=10, pady=10)
+
+    PasswordLabel = Label(connectWindow, text='Password', font=('Helvetica', 15, 'bold'))
+    PasswordLabel.grid(row=2, column=0, padx=10, pady=10)
+
+    PasswordEntry = Entry(connectWindow, font=('Password', 15, 'bold'))
+    PasswordEntry.grid(row=2, column=1, padx=10, pady=10)
+
+    connectButton=ttk.Button(connectWindow, text='Connect')
+    connectButton.grid(row=3, column=0, padx=10, pady=10)
+
 # GUI Part
 root = ttkthemes.ThemedTk()
 root.get_themes()
@@ -46,7 +74,7 @@ sliderLabel = Label(root, font=('Helvetica', 30, 'bold'), relief=RIDGE, width=30
 sliderLabel.place(x=200, y=0)
 slider()  # Start the animation
 
-connectButton = ttk.Button(root, text='Connect Database')
+connectButton = ttk.Button(root, text='Connect Database', command=connect_database)
 connectButton.place(x=980, y=0)
 
 leftFrame = Frame(root, relief=RIDGE)
