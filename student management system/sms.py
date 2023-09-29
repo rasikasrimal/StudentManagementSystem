@@ -5,6 +5,11 @@ from tkinter import ttk
 
 count = 0
 text = ''
+
+# Function to handle exit button click
+def exit_program():
+    root.destroy()
+
 # Function to handle slider
 def slider():
     global count, text
@@ -51,25 +56,25 @@ logo_image = PhotoImage(file='images/student2.png')
 logo_label = Label(leftFrame, image=logo_image)
 logo_label.grid(row=0, column=0, padx=10, pady=10)
 
-addstudentButton = ttk.Button(leftFrame, text='Add Student', width=25)
+addstudentButton = ttk.Button(leftFrame, text='Add Student', width=25, state=DISABLED)
 addstudentButton.grid(row=1, column=0, padx=10, pady=0)
 
-searchstudentButton = ttk.Button(leftFrame, text='Search Student', width=25)
+searchstudentButton = ttk.Button(leftFrame, text='Search Student', width=25, state=DISABLED)
 searchstudentButton.grid(row=2, column=0, padx=10, pady=0)
 
-deletestudentButton = ttk.Button(leftFrame, text='Delete Student', width=25)
+deletestudentButton = ttk.Button(leftFrame, text='Delete Student', width=25, state=DISABLED)
 deletestudentButton.grid(row=3, column=0, padx=10, pady=0)
 
-updatestudentButton = ttk.Button(leftFrame, text='Update Student', width=25)
+updatestudentButton = ttk.Button(leftFrame, text='Update Student', width=25, state=DISABLED)
 updatestudentButton.grid(row=4, column=0, padx=10, pady=0)
 
-showstudentButton = ttk.Button(leftFrame, text='Show Student', width=25)
+showstudentButton = ttk.Button(leftFrame, text='Show Student', width=25, state=DISABLED)
 showstudentButton.grid(row=5, column=0, padx=10, pady=0)
 
-exportDataButton = ttk.Button(leftFrame, text='Export Data', width=25)
+exportDataButton = ttk.Button(leftFrame, text='Export Data', width=25, state=DISABLED)
 exportDataButton.grid(row=6, column=0, padx=10, pady=0)
 
-exitButton = ttk.Button(leftFrame, text='Exit', width=25)
+exitButton = ttk.Button(leftFrame, text='Exit', width=25, command=exit_program)
 exitButton.grid(row=7, column=0, padx=10, pady=0)
 
 rightframe = Frame(root, bg='white', relief=RIDGE)
