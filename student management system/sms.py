@@ -83,10 +83,11 @@ rightframe.place(x=320, y=70, width=800, height=550)
 ScrollbarX = Scrollbar(rightframe, orient=HORIZONTAL)
 ScrollbarY = Scrollbar(rightframe, orient=VERTICAL)
 
-student_table = ttk.Treeview(rightframe, columns=('ID', 'Name', 'Mobile No', 'Email', 'Address', 'Gender',
-                                  'DOB', 'Added Date', 'Added Time' ),
-                                  xscrollcommand=ScrollbarX.set,
-                                  yscrollcommand=ScrollbarY.set)
+student_table = ttk.Treeview(rightframe, columns=(
+    'ID', 'Name', 'Mobile No', 'Email', 'Address', 
+    'Gender','DOB', 'Added Date', 'Added Time' ),
+        xscrollcommand=ScrollbarX.set,
+        yscrollcommand=ScrollbarY.set)
 
 ScrollbarX.config(command=student_table.xview)
 ScrollbarY.config(command=student_table.yview)
