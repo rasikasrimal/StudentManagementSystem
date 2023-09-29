@@ -6,14 +6,18 @@ from tkinter import messagebox
 def login():
     if usernameEntry.get() == '' or passwordEntry.get() == '':
         messagebox.showerror('Error', 'All fields are required')
-    elif usernameEntry.get() == 'snow' and passwordEntry.get() == '123456':
+    elif usernameEntry.get() == 'snow' and passwordEntry.get() == '1234':
         messagebox.showinfo('Success', 'Login Successful')
     else :
         messagebox.showerror('Error', 'Invalid Username or Password')
+    window.destroy()
+    import sms
+    
 
 # Create the main window
 window = Tk()
 window.geometry('1280x700')
+window.title('Login - Student Management System')
 
 # Load the background image
 background_image = ImageTk.PhotoImage(file='images/bg.jpg')
