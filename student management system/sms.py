@@ -7,6 +7,97 @@ import pymysql
 count = 0
 text = ''
 
+def add_student():
+    def add_data():
+        if (
+            idEntry.get() == '' or
+            nameEntry.get() == '' or
+            mobileEntry.get() == '' or
+            emailEntry.get() == '' or
+            addressEntry.get() == '' or
+            genderEntry.get() == '' or
+            dobEntry.get() == ''
+        ):
+            messagebox.showerror('Error', 'All fields are required', parent=add_windows)
+        else:
+            currentdate = time.strftime('%Y:%m:%d')
+            currenttime = time.strftime('%H:%M:%S')
+            query = 'INSERT INTO student VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s)'
+            try:
+                mycursor.execute(query, (
+                    idEntry.get(),
+                    nameEntry.get(),
+                    mobileEntry.get(),
+                    emailEntry.get(),
+                    addressEntry.get(), 
+                    genderEntry.get(), 
+                    dobEntry.get(), 
+                    currentdate,
+                    currenttime
+                ))
+                con.commit()
+                result = messagebox.askyesnocancel('Success', 'Do you want to clear the form?')
+                if result:
+                    idEntry.delete(0, END)
+                    nameEntry.delete(0, END)
+                    mobileEntry.delete(0, END)
+                    emailEntry.delete(0, END)
+                    addressEntry.delete(0, END)
+                    genderEntry.delete(0, END)
+                    dobEntry.delete(0, END)
+            except Exception as e:
+                print(f"Error: {e}")
+                messagebox.showerror('Error', 'This ID is already taken', parent=add_windows)
+
+        query = 'SELECT * FROM student'
+        mycursor.execute(query)
+        fetched_data = mycursor.fetchall()
+        student_table.delete(*student_table.get_children())
+        for data in fetched_data:
+            data_list = list(data)
+            student_table.insert('', END, values=data_list)
+
+    add_windows = Toplevel()
+    add_windows.grab_set()
+    add_windows.resizable(False, False)
+    idlable = Label(add_windows, text='ID', font=('Helvetica', 15, 'bold'))
+    idlable.grid(row=0, column=0, padx=10, pady=10, sticky='w')
+    idEntry = Entry(add_windows, font=('Helvetica', 15, 'bold'), width=24)
+    idEntry.grid(row=0, column=1, padx=10, pady=10)
+
+    namelable = Label(add_windows, text='Name', font=('Helvetica', 15, 'bold'))
+    namelable.grid(row=1, column=0, padx=10, pady=10, sticky='w')
+    nameEntry = Entry(add_windows, font=('Helvetica', 15, 'bold'), width=24)
+    nameEntry.grid(row=1, column=1, padx=10, pady=10)
+
+    mobilelable = Label(add_windows, text='Mobile', font=('Helvetica', 15, 'bold'))
+    mobilelable.grid(row=2, column=0, padx=10, pady=10, sticky='w')
+    mobileEntry = Entry(add_windows, font=('Helvetica', 15, 'bold'), width=24)
+    mobileEntry.grid(row=2, column=1, padx=10, pady=10)
+
+    emaillable = Label(add_windows, text='Email', font=('Helvetica', 15, 'bold'))
+    emaillable.grid(row=3, column=0, padx=10, pady=10, sticky='w')
+    emailEntry = Entry(add_windows, font=('Helvetica', 15, 'bold'), width=24)
+    emailEntry.grid(row=3, column=1, padx=10, pady=10)
+
+    addresslable = Label(add_windows, text='Address', font=('Helvetica', 15, 'bold'))
+    addresslable.grid(row=4, column=0, padx=10, pady=10, sticky='w')
+    addressEntry = Entry(add_windows, font=('Helvetica', 15, 'bold'), width=24)
+    addressEntry.grid(row=4, column=1, padx=10, pady=10)
+
+    genderlable = Label(add_windows, text='Gender', font=('Helvetica', 15, 'bold'))
+    genderlable.grid(row=5, column=0, padx=10, pady=10, sticky='w')
+    genderEntry = Entry(add_windows, font=('Helvetica', 15, 'bold'), width=24)
+    genderEntry.grid(row=5, column=1, padx=10, pady=10)
+
+    doblable = Label(add_windows, text='DOB', font=('Helvetica', 15, 'bold'))
+    doblable.grid(row=6, column=0, padx=10, pady=10, sticky='w')
+    dobEntry = Entry(add_windows, font=('Helvetica', 15, 'bold'), width=24)
+    dobEntry.grid(row=6, column=1, padx=10, pady=10)
+
+    add_student_button = ttk.Button(add_windows, text='Add Student', width=25, command=add_data)
+    add_student_button.grid(row=9, columnspan=2, padx=10, pady=10)
+
 # Function to handle exit button click
 def exit_program():
     root.destroy()
@@ -34,8 +125,10 @@ def connect_database():
 
     # Function to handle connect button click
     def connect():
+        global mycursor, con
         try:
-            con = pymysql.connect(host=hostEntry.get(), user=userEntry.get(), password=PasswordEntry.get())
+            con = pymysql.connect(host='localhost', user='root', password='1234')
+            # con = pymysql.connect(host=hostEntry.get(), user=userEntry.get(), password=PasswordEntry.get())
             mycursor = con.cursor()
         except:
             messagebox.showinfo('Success', 'Connected to Database')
@@ -45,7 +138,8 @@ def connect_database():
             mycursor.execute(query)
             query = 'USE studentmanagementsystem'
             mycursor.execute(query)
-            query = '''
+            
+            query = ''' 
             CREATE TABLE IF NOT EXISTS student (
                     id INT NOT NULL PRIMARY KEY, 
                     name VARCHAR(255), 
@@ -58,28 +152,16 @@ def connect_database():
                     time TIME
                     )
                 '''
+            mycursor.execute(query)
         except:
                 query = 'USE studentmanagementsystem'
-                mycursor.execute(query)
-                query = '''
-                INSERT INTO student (id, name, mobile, email, address, gender, dob, date, time) VALUES
-                    (1, 'John Doe', '123-456-7890', 'john.doe@example.com', '123 Main St, City', 'Male', '1990-05-15', '2023-09-08', '14:30:00'),
-                    (2, 'Jane Smith', '987-654-3210', 'jane.smith@example.com', '456 Elm St, Town', 'Female', '1995-08-22', '2023-09-08', '10:15:00'),
-                    (3, 'Michael Johnson', '555-555-5555', 'michael.j@example.com', '789 Oak St, Village', 'Male', '1998-03-10', '2023-09-09', '09:45:00'),
-                    (4, 'Emily Davis', '777-888-9999', 'emily.d@example.com', '101 Pine St, Town', 'Female', '1993-12-05', '2023-09-09', '16:00:00'),
-                    (5, 'William Brown', '111-222-3333', 'william.b@example.com', '222 Cedar St, City', 'Male', '1991-07-18', '2023-09-10', '11:30:00'),
-                    (6, 'Olivia Lee', '444-333-2222', 'olivia.l@example.com', '333 Maple St, Village', 'Female', '1997-02-28', '2023-09-10', '13:45:00'),
-                    (7, 'James Wilson', '999-888-7777', 'james.w@example.com', '444 Oak St, City', 'Male', '1996-09-12', '2023-09-11', '15:20:00'),
-                    (8, 'Sophia Turner', '777-555-1111', 'sophia.t@example.com', '555 Birch St, Town', 'Female', '1994-11-08', '2023-09-11', '08:00:00'),
-                    (9, 'Daniel Evans', '666-555-4444', 'daniel.e@example.com', '666 Willow St, Village', 'Male', '1992-04-30', '2023-09-12', '10:00:00'),
-                    (10, 'Ava White', '222-333-4444', 'ava.w@example.com', '777 Pine St, City', 'Female', '1999-01-25', '2023-09-12', '14:15:00');
-                '''
                 mycursor.execute(query)
 
         # con.commit()
         # con.close()
 
         messagebox.showinfo('Success', 'Connected to Database')
+        connectWindow.destroy()
         addstudentButton.config(state=NORMAL)
         searchstudentButton.config(state=NORMAL)
         updatestudentButton.config(state=NORMAL)
@@ -144,7 +226,7 @@ logo_image = PhotoImage(file='images/student2.png')
 logo_label = Label(leftFrame, image=logo_image)
 logo_label.grid(row=0, column=0, padx=10, pady=10)
 
-addstudentButton = ttk.Button(leftFrame, text='Add Student', width=25, state=DISABLED)
+addstudentButton = ttk.Button(leftFrame, text='Add Student', width=25, state=DISABLED, command=add_student)
 addstudentButton.grid(row=1, column=0, padx=10, pady=0)
 
 searchstudentButton = ttk.Button(leftFrame, text='Search Student', width=25, state=DISABLED)
