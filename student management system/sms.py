@@ -1,7 +1,8 @@
 from tkinter import *
 import time
 import ttkthemes
-from tkinter import ttk
+from tkinter import ttk, messagebox
+import pymysql
 
 count = 0
 text = ''
@@ -30,7 +31,66 @@ def clock():
 
 # Function to handle connect database button click
 def connect_database():
+
+    # Function to handle connect button click
+    def connect():
+        try:
+            con = pymysql.connect(host=hostEntry.get(), user=userEntry.get(), password=PasswordEntry.get())
+            mycursor = con.cursor()
+        except:
+            messagebox.showinfo('Success', 'Connected to Database')
+            return
+        try:
+            query = 'CREATE DATABASE IF NOT EXISTS studentmanagementsystem'
+            mycursor.execute(query)
+            query = 'USE studentmanagementsystem'
+            mycursor.execute(query)
+            query = '''
+            CREATE TABLE IF NOT EXISTS student (
+                    id INT NOT NULL PRIMARY KEY, 
+                    name VARCHAR(255), 
+                    mobile VARCHAR(15),
+                    email VARCHAR(255),
+                    address TEXT,
+                    gender VARCHAR(10),
+                    dob DATE,
+                    date DATE,
+                    time TIME
+                    )
+                '''
+        except:
+                query = 'USE studentmanagementsystem'
+                mycursor.execute(query)
+                query = '''
+                INSERT INTO student (id, name, mobile, email, address, gender, dob, date, time) VALUES
+                    (1, 'John Doe', '123-456-7890', 'john.doe@example.com', '123 Main St, City', 'Male', '1990-05-15', '2023-09-08', '14:30:00'),
+                    (2, 'Jane Smith', '987-654-3210', 'jane.smith@example.com', '456 Elm St, Town', 'Female', '1995-08-22', '2023-09-08', '10:15:00'),
+                    (3, 'Michael Johnson', '555-555-5555', 'michael.j@example.com', '789 Oak St, Village', 'Male', '1998-03-10', '2023-09-09', '09:45:00'),
+                    (4, 'Emily Davis', '777-888-9999', 'emily.d@example.com', '101 Pine St, Town', 'Female', '1993-12-05', '2023-09-09', '16:00:00'),
+                    (5, 'William Brown', '111-222-3333', 'william.b@example.com', '222 Cedar St, City', 'Male', '1991-07-18', '2023-09-10', '11:30:00'),
+                    (6, 'Olivia Lee', '444-333-2222', 'olivia.l@example.com', '333 Maple St, Village', 'Female', '1997-02-28', '2023-09-10', '13:45:00'),
+                    (7, 'James Wilson', '999-888-7777', 'james.w@example.com', '444 Oak St, City', 'Male', '1996-09-12', '2023-09-11', '15:20:00'),
+                    (8, 'Sophia Turner', '777-555-1111', 'sophia.t@example.com', '555 Birch St, Town', 'Female', '1994-11-08', '2023-09-11', '08:00:00'),
+                    (9, 'Daniel Evans', '666-555-4444', 'daniel.e@example.com', '666 Willow St, Village', 'Male', '1992-04-30', '2023-09-12', '10:00:00'),
+                    (10, 'Ava White', '222-333-4444', 'ava.w@example.com', '777 Pine St, City', 'Female', '1999-01-25', '2023-09-12', '14:15:00');
+                '''
+                mycursor.execute(query)
+
+        # con.commit()
+        # con.close()
+
+        messagebox.showinfo('Success', 'Connected to Database')
+        addstudentButton.config(state=NORMAL)
+        searchstudentButton.config(state=NORMAL)
+        updatestudentButton.config(state=NORMAL)
+        showstudentButton.config(state=NORMAL)
+        exportDataButton.config(state=NORMAL)
+        deletestudentButton.config(state=NORMAL)
+
+#############################################################
+
     connectWindow = Toplevel()
+    connectWindow.grab_set()
     connectWindow.title('Connect Database')
     connectWindow.geometry('500x300+500+200')
     connectWindow.resizable(False, False)
@@ -53,7 +113,7 @@ def connect_database():
     PasswordEntry = Entry(connectWindow, font=('Password', 15, 'bold'))
     PasswordEntry.grid(row=2, column=1, padx=10, pady=10)
 
-    connectButton=ttk.Button(connectWindow, text='Connect')
+    connectButton=ttk.Button(connectWindow, text='Connect', command=connect)
     connectButton.grid(row=3, column=0, padx=10, pady=10)
 
 # GUI Part
