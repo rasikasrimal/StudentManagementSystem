@@ -7,6 +7,71 @@ import pymysql
 count = 0
 text = ''
 
+def search_student():
+
+    def search_data():
+        query = ' SELECT * FROM student WHERE id=%s or Name=%s or mobile=%s or Email=%s or address=%s or gender=%s or dob=%s or date=%s or time=%s'
+
+        mycursor.execute(query, (
+            idEntry.get(), 
+            nameEntry.get(), 
+            emailEntry.get(), 
+            mobileEntry.get(), 
+            addressEntry.get(), 
+            genderEntry.get(), 
+            dobEntry.get() ))
+        student_table.delete(*student_table.get_children())
+        fetched_data = mycursor.fetchall()
+        for data in fetched_data:
+            student_table.insert('', END, values=data)
+                 
+        
+
+    search_windows = Toplevel()
+    search_windows.grab_set()
+    search_windows.title('Search Student')
+    search_windows.resizable(False, False)
+    idlable = Label(search_windows, text='ID', font=('Helvetica', 15, 'bold'))
+    idlable.grid(row=0, column=0, padx=10, pady=10, sticky='w')
+    idEntry = Entry(search_windows, font=('Helvetica', 15, 'bold'), width=24)
+    idEntry.grid(row=0, column=1, padx=10, pady=10)
+
+    namelable = Label(search_windows, text='Name', font=('Helvetica', 15, 'bold'))
+    namelable.grid(row=1, column=0, padx=10, pady=10, sticky='w')
+    nameEntry = Entry(search_windows, font=('Helvetica', 15, 'bold'), width=24)
+    nameEntry.grid(row=1, column=1, padx=10, pady=10)
+
+    mobilelable = Label(search_windows, text='Mobile', font=('Helvetica', 15, 'bold'))
+    mobilelable.grid(row=2, column=0, padx=10, pady=10, sticky='w')
+    mobileEntry = Entry(search_windows, font=('Helvetica', 15, 'bold'), width=24)
+    mobileEntry.grid(row=2, column=1, padx=10, pady=10)
+
+    emaillable = Label(search_windows, text='Email', font=('Helvetica', 15, 'bold'))
+    emaillable.grid(row=3, column=0, padx=10, pady=10, sticky='w')
+    emailEntry = Entry(search_windows, font=('Helvetica', 15, 'bold'), width=24)
+    emailEntry.grid(row=3, column=1, padx=10, pady=10)
+
+    addresslable = Label(search_windows, text='Address', font=('Helvetica', 15, 'bold'))
+    addresslable.grid(row=4, column=0, padx=10, pady=10, sticky='w')
+    addressEntry = Entry(search_windows, font=('Helvetica', 15, 'bold'), width=24)
+    addressEntry.grid(row=4, column=1, padx=10, pady=10)
+
+    genderlable = Label(search_windows, text='Gender', font=('Helvetica', 15, 'bold'))
+    genderlable.grid(row=5, column=0, padx=10, pady=10, sticky='w')
+    genderEntry = Entry(search_windows, font=('Helvetica', 15, 'bold'), width=24)
+    genderEntry.grid(row=5, column=1, padx=10, pady=10)
+
+    doblable = Label(search_windows, text='DOB', font=('Helvetica', 15, 'bold'))
+    doblable.grid(row=6, column=0, padx=10, pady=10, sticky='w')
+    dobEntry = Entry(search_windows, font=('Helvetica', 15, 'bold'), width=24)
+    dobEntry.grid(row=6, column=1, padx=10, pady=10)
+
+    search_student_button = ttk.Button(search_windows, text='Search Student', width=25, command=search_data)
+    search_student_button.grid(row=9, columnspan=2, padx=10, pady=10)
+
+
+#################################################################################################
+
 def add_student():
     def add_data():
         if (
@@ -47,7 +112,8 @@ def add_student():
                     dobEntry.delete(0, END)
             except Exception as e:
                 print(f"Error: {e}")
-                messagebox.showerror('Error', 'This ID is already taken', parent=add_windows)
+                messagebox.showerror('Error', 'This ID is already taken', parent=search_windows)
+                return
 
         query = 'SELECT * FROM student'
         mycursor.execute(query)
@@ -229,7 +295,7 @@ logo_label.grid(row=0, column=0, padx=10, pady=10)
 addstudentButton = ttk.Button(leftFrame, text='Add Student', width=25, state=DISABLED, command=add_student)
 addstudentButton.grid(row=1, column=0, padx=10, pady=0)
 
-searchstudentButton = ttk.Button(leftFrame, text='Search Student', width=25, state=DISABLED)
+searchstudentButton = ttk.Button(leftFrame, text='Search Student', width=25, state=DISABLED, command=search_student)
 searchstudentButton.grid(row=2, column=0, padx=10, pady=0)
 
 deletestudentButton = ttk.Button(leftFrame, text='Delete Student', width=25, state=DISABLED)
