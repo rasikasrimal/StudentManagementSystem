@@ -8,18 +8,18 @@ count = 0
 text = ''
 
 def search_student():
-
     def search_data():
-        query = ' SELECT * FROM student WHERE id=%s or Name=%s or mobile=%s or Email=%s or address=%s or gender=%s or dob=%s or date=%s or time=%s'
+        query = 'SELECT * FROM student WHERE id=%s or Name=%s or Email=%s or mobile=%s or gender=%s or dob=%s' #or address=%s'
 
         mycursor.execute(query, (
-            idEntry.get(), 
-            nameEntry.get(), 
-            emailEntry.get(), 
-            mobileEntry.get(), 
-            addressEntry.get(), 
+            idEntry.get(),
+            nameEntry.get(),
+            emailEntry.get(),
+            mobileEntry.get(),
+            # addressEntry.get(),
             genderEntry.get(), 
-            dobEntry.get() ))
+            dobEntry.get() 
+            ))
         student_table.delete(*student_table.get_children())
         fetched_data = mycursor.fetchall()
         for data in fetched_data:
