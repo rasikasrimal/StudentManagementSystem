@@ -7,6 +7,124 @@ import pymysql
 count = 0
 text = ''
 
+def update_student():
+
+    def update_data():
+        global currentdate, currenttime
+        currentdate = time.strftime('%d:%m:%Y')
+        currenttime = time.strftime('%H:%M:%S')
+
+        query = 'update student set name=%s, mobile=%s, email=%s, address=%s, gender=%s, dob=%s, date=%s, time=%s where id=%s'
+        mycursor.execute(query, (
+            nameEntry.get(),
+            mobileEntry.get(),
+            emailEntry.get(),
+            addressEntry.get(),
+            genderEntry.get(),
+            dobEntry.get(),
+            currentdate,
+            currenttime,
+            idEntry.get()
+        ))
+        con.commit()
+        messagebox.showinfo('Success', 'Student Updated Successfully')
+    
+    update_windows = Toplevel()
+    update_windows.grab_set()
+    update_windows.title('Update Student')
+    update_windows.resizable(False, False)
+    idlable = Label(update_windows, text='ID', font=('Helvetica', 15, 'bold'))
+    idlable.grid(row=0, column=0, padx=10, pady=10, sticky='w')
+    idEntry = Entry(update_windows, font=('Helvetica', 15, 'bold'), width=24)
+    idEntry.grid(row=0, column=1, padx=10, pady=10)
+
+    namelable = Label(update_windows, text='Name', font=('Helvetica', 15, 'bold'))
+    namelable.grid(row=1, column=0, padx=10, pady=10, sticky='w')
+    nameEntry = Entry(update_windows, font=('Helvetica', 15, 'bold'), width=24)
+    nameEntry.grid(row=1, column=1, padx=10, pady=10)
+
+    mobilelable = Label(update_windows, text='Mobile', font=('Helvetica', 15, 'bold'))
+    mobilelable.grid(row=2, column=0, padx=10, pady=10, sticky='w')
+    mobileEntry = Entry(update_windows, font=('Helvetica', 15, 'bold'), width=24)
+    mobileEntry.grid(row=2, column=1, padx=10, pady=10)
+
+    emaillable = Label(update_windows, text='Email', font=('Helvetica', 15, 'bold'))
+    emaillable.grid(row=3, column=0, padx=10, pady=10, sticky='w')
+    emailEntry = Entry(update_windows, font=('Helvetica', 15, 'bold'), width=24)
+    emailEntry.grid(row=3, column=1, padx=10, pady=10)
+
+    addresslable = Label(update_windows, text='Address', font=('Helvetica', 15, 'bold'))
+    addresslable.grid(row=4, column=0, padx=10, pady=10, sticky='w')
+    addressEntry = Entry(update_windows, font=('Helvetica', 15, 'bold'), width=24)
+    addressEntry.grid(row=4, column=1, padx=10, pady=10)
+
+    genderlable = Label(update_windows, text='Gender', font=('Helvetica', 15, 'bold'))
+    genderlable.grid(row=5, column=0, padx=10, pady=10, sticky='w')
+    genderEntry = Entry(update_windows, font=('Helvetica', 15, 'bold'), width=24)
+    genderEntry.grid(row=5, column=1, padx=10, pady=10)
+
+    doblable = Label(update_windows, text='DOB', font=('Helvetica', 15, 'bold'))
+    doblable.grid(row=6, column=0, padx=10, pady=10, sticky='w')
+    dobEntry = Entry(update_windows, font=('Helvetica', 15, 'bold'), width=24)
+    dobEntry.grid(row=6, column=1, padx=10, pady=10)
+
+    update_student_button = ttk.Button(update_windows, text='Update Student', width=25, command=update_data)
+    update_student_button.grid(row=9, columnspan=2, padx=10, pady=10)
+
+    indexing=student_table.focus()
+    print(indexing)
+    content=student_table.item(indexing)
+    listdata=content['values']
+
+    idEntry.insert(0,listdata[0])
+    nameEntry.insert(0,listdata[1])
+    mobileEntry.insert(0,listdata[2])
+    emailEntry.insert(0,listdata[3])
+    addressEntry.insert(0,listdata[4])
+    genderEntry.insert(0,listdata[5])
+    dobEntry.insert(0,listdata[6])
+
+
+
+
+
+
+##########################################################################
+    
+
+
+
+def show_student():
+    query='SELECT * FROM student'
+    mycursor.execute(query)
+    fetched_data=mycursor.fetchall()
+    student_table.delete(*student_table.get_children())
+    for data in fetched_data:
+        data_list=list(data)
+        student_table.insert('',END,values=data_list)
+
+    
+
+def delete_student():
+    indexing=student_table.focus()
+    print(indexing)
+    content=student_table.item(indexing)
+    content_id=content['values'][0]
+    query='DELETE FROM student WHERE id=%s'
+    mycursor.execute(query,(content_id))
+    con.commit()
+    messagebox.showinfo('DELETED',f'User {content_id} is DELETED Successfully')
+    query='SELECT * FROM student'
+    mycursor.execute(query)
+    fetched_data=mycursor.fetchall()
+    student_table.delete(*student_table.get_children())
+    for data in fetched_data:
+        data_list=list(data)
+        student_table.insert('',END,values=data_list)
+
+
+#################################################################################################
+
 def search_student():
     def search_data():
         query = 'SELECT * FROM student WHERE id=%s or Name=%s or Email=%s or mobile=%s or gender=%s or dob=%s' #or address=%s'
@@ -74,6 +192,10 @@ def search_student():
 
 def add_student():
     def add_data():
+        global currentdate, currenttime
+        currentdate = time.strftime('%Y:%m:%d')
+        currenttime = time.strftime('%H:%M:%S')
+
         if (
             idEntry.get() == '' or
             nameEntry.get() == '' or
@@ -85,8 +207,6 @@ def add_student():
         ):
             messagebox.showerror('Error', 'All fields are required', parent=add_windows)
         else:
-            currentdate = time.strftime('%Y:%m:%d')
-            currenttime = time.strftime('%H:%M:%S')
             query = 'INSERT INTO student VALUES(%s, %s, %s, %s, %s, %s, %s, %s, %s)'
             try:
                 mycursor.execute(query, (
@@ -99,6 +219,7 @@ def add_student():
                     dobEntry.get(), 
                     currentdate,
                     currenttime
+#######################################################################################################
                 ))
                 con.commit()
                 result = messagebox.askyesnocancel('Success', 'Do you want to clear the form?')
@@ -181,6 +302,7 @@ def slider():
 
 # Function to handle login button click
 def clock():
+    global currentdate, currenttime
     date=time.strftime('%d:%m:%Y')
     current_time = time.strftime('%H:%M:%S')
     datetimeLabel.config(text=f'{date}\n{current_time}') 
@@ -298,13 +420,13 @@ addstudentButton.grid(row=1, column=0, padx=10, pady=0)
 searchstudentButton = ttk.Button(leftFrame, text='Search Student', width=25, state=DISABLED, command=search_student)
 searchstudentButton.grid(row=2, column=0, padx=10, pady=0)
 
-deletestudentButton = ttk.Button(leftFrame, text='Delete Student', width=25, state=DISABLED)
+deletestudentButton = ttk.Button(leftFrame, text='Delete Student', width=25, state=DISABLED, command=delete_student)
 deletestudentButton.grid(row=3, column=0, padx=10, pady=0)
 
-updatestudentButton = ttk.Button(leftFrame, text='Update Student', width=25, state=DISABLED)
+updatestudentButton = ttk.Button(leftFrame, text='Update Student', width=25, state=DISABLED, command=update_student)
 updatestudentButton.grid(row=4, column=0, padx=10, pady=0)
 
-showstudentButton = ttk.Button(leftFrame, text='Show Student', width=25, state=DISABLED)
+showstudentButton = ttk.Button(leftFrame, text='Show Student', width=25, state=DISABLED, command=show_student)
 showstudentButton.grid(row=5, column=0, padx=10, pady=0)
 
 exportDataButton = ttk.Button(leftFrame, text='Export Data', width=25, state=DISABLED)
@@ -343,6 +465,19 @@ student_table.heading('DOB', text='DOB')
 student_table.heading('Added Date', text='Added Date')
 student_table.heading('Added Time', text='Added Time')
 
+student_table.column('ID', width=20, anchor=CENTER)
+student_table.column('Name', width=100, anchor=CENTER)
+student_table.column('Mobile No', width=60, anchor=CENTER)
+student_table.column('Email', width=60, anchor=CENTER)
+student_table.column('Address', width=60, anchor=CENTER)
+student_table.column('Gender', width=30, anchor=CENTER)
+student_table.column('DOB', width=60, anchor=CENTER)
+student_table.column('Added Date', width=60, anchor=CENTER)
+student_table.column('Added Time', width=60, anchor=CENTER)
+
+style = ttk.Style()
+style.configure('Treeview', rowheight=40, font=('Helvetica', 10), foreground='black', background='white', fieldbackground='grey')
+style.configure('Treeview.Heading', font=('Helvetica', 12, 'bold'), foreground='black', background='light green', fieldbackground='grey')
 student_table.config(show='headings')
 
 root.mainloop()
