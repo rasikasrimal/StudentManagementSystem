@@ -1,11 +1,33 @@
 from tkinter import *
 import time
 import ttkthemes
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, filedialog
 import pymysql
+import pandas
 
 count = 0
 text = ''
+
+def iexit():
+    result = messagebox.askyesno('Confirm Exit', 'Are you sure you want to exit?')
+    if result:
+        root.destroy()
+    else:
+        pass
+
+def export_data():
+    url=filedialog.asksaveasfilename(defaultextension='.csv')
+    indexing=student_table.get_children()
+    newlist = []
+    for index in indexing:
+        content=student_table.item(index)
+        datalist=content['values']
+        newlist.append(datalist)
+    
+    table=pandas.DataFrame(newlist, columns=['id', 'name', 'mobile', 'email', 'address', 'gender', 'dob', 'added_date', 'added-time'])
+    table.to_csv(url, index=False)
+    messagebox.showeinfo('Success', 'Data Exported Successfully')
+
 
 def toplevel_date(title, button_text, command):
     global idEntry, mobileEntry, nameEntry, emailEntry, addressEntry, genderEntry, dobEntry, screen
@@ -348,10 +370,10 @@ updatestudentButton.grid(row=4, column=0, padx=10, pady=0)
 showstudentButton = ttk.Button(leftFrame, text='Show Student', width=25, state=DISABLED, command=show_student)
 showstudentButton.grid(row=5, column=0, padx=10, pady=0)
 
-exportDataButton = ttk.Button(leftFrame, text='Export Data', width=25, state=DISABLED)
+exportDataButton = ttk.Button(leftFrame, text='Export Data', width=25, state=DISABLED, command=export_data)
 exportDataButton.grid(row=6, column=0, padx=10, pady=0)
 
-exitButton = ttk.Button(leftFrame, text='Exit', width=25, command=exit_program)
+exitButton = ttk.Button(leftFrame, text='Exit', width=25, command=iexit)
 exitButton.grid(row=7, column=0, padx=10, pady=0)
 
 rightframe = Frame(root, bg='white', relief=RIDGE)
