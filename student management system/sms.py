@@ -7,9 +7,25 @@ import pandas
 
 import exit_operations as exit_ops
 import export_operations as export_ops
+import delete_operations as delete_ops
+
 
 count = 0
 text = ''
+
+def export_data():
+    url=filedialog.asksaveasfilename(defaultextension='.csv')
+    indexing=student_table.get_children()
+    newlist = []
+    for index in indexing:
+        content=student_table.item(index)
+        datalist=content['values']
+        newlist.append(datalist)
+    
+    table=pandas.DataFrame(newlist, columns=['id', 'name', 'mobile', 'email', 'address', 'gender', 'dob', 'added_date', 'added-time'])
+    table.to_csv(url, index=False)
+    messagebox.showeinfo('Success', 'Data Exported Successfully')
+
 
 def toplevel_date(title, button_text, command):
     global idEntry, mobileEntry, nameEntry, emailEntry, addressEntry, genderEntry, dobEntry, screen
@@ -91,18 +107,6 @@ def update_data():
     screen.destroy()
     show_student()
 
-    
-
-
-
-
-
-
-##########################################################################
-    
-
-
-
 def show_student():
     query='SELECT * FROM student'
     mycursor.execute(query)
@@ -112,28 +116,7 @@ def show_student():
         data_list=list(data)
         student_table.insert('',END,values=data_list)
 
-    
-
-def delete_student():
-    indexing=student_table.focus()
-    print(indexing)
-    content=student_table.item(indexing)
-    content_id=content['values'][0]
-    query='DELETE FROM student WHERE id=%s'
-    mycursor.execute(query,(content_id))
-    con.commit()
-    messagebox.showinfo('DELETED',f'User {content_id} is DELETED Successfully')
-    query='SELECT * FROM student'
-    mycursor.execute(query)
-    fetched_data=mycursor.fetchall()
-    student_table.delete(*student_table.get_children())
-    for data in fetched_data:
-        data_list=list(data)
-        student_table.insert('',END,values=data_list)
-
-
 #################################################################################################
-
 
 def search_data():
     query = 'SELECT * FROM student WHERE id=%s or Name=%s or Email=%s or mobile=%s or gender=%s or dob=%s' #or address=%s'
@@ -152,9 +135,7 @@ def search_data():
     for data in fetched_data:
         student_table.insert('', END, values=data)
 
-
 #################################################################################################
-
 
 def add_data():
     global currentdate, currenttime
@@ -208,20 +189,22 @@ def add_data():
             data_list = list(data)
             student_table.insert('', END, values=data_list)
 
+#################################################################################################
+
 # Function to handle exit button click
 def exit_program():
     root.destroy()
 
 # Function to handle slider
-def slider():
-    global count, text
-    if count == len(s):
-        count = 0
-        text = ''
-    text = text + s[count]
-    sliderLabel.config(text=text)
-    count += 1
-    sliderLabel.after(60, slider)
+# def slider():
+#     global count, text
+#     if count == len(s):
+#         count = 0
+#         text = ''
+#     text = text + s[count]
+#     sliderLabel.config(text=text)
+#     count += 1
+#     sliderLabel.after(60, slider)
 
 # Function to handle login button click
 def clock():
@@ -315,23 +298,29 @@ root.get_themes()
 root.set_theme('radiance')
 
 root.geometry('1174x680+0+0')
-root.resizable(False, False)
+root.resizable(True, True)
 root.title('Student Management System')
 
-datetimeLabel = Label(root, text='Hello', font=('Helvetica', 20, 'bold'))
-datetimeLabel.place(x=5, y=5)
-clock()
+# datetimeLabel = Label(root, text='Hello', font=('Helvetica', 20, 'bold'))
+# datetimeLabel.place(x=5, y=5)
+# clock()
+
+# s = 'Student Management System'
+# sliderLabel = Label(root, font=('Helvetica', 30, 'bold'), relief=RIDGE, width=30)
+# sliderLabel.place(x=200, y=0)
+# slider() # Start the animation
 
 s = 'Student Management System'
-sliderLabel = Label(root, font=('Helvetica', 30, 'bold'), relief=RIDGE, width=30)
-sliderLabel.place(x=200, y=0)
-slider()  # Start the animation
+sliderLabel = Label(root, text=s, font=('Helvetica', 30, 'bold'), width=30, fg='black', anchor='w')
+sliderLabel.place(x=5, y=5)
 
 connectButton = ttk.Button(root, text='Connect Database', command=connect_database)
 connectButton.place(x=980, y=0)
 
-leftFrame = Frame(root, relief=RIDGE)
-leftFrame.place(x=10, y=70, width=300, height=600)
+#####################################################
+leftFrame = Frame(root, relief=RIDGE, border=2)
+leftFrame.place(x=10, y=70, width=300, height=534)
+######################################################
 
 logo_image = PhotoImage(file='images/student2.png')
 logo_label = Label(leftFrame, image=logo_image)
@@ -343,7 +332,7 @@ addstudentButton.grid(row=1, column=0, padx=10, pady=0)
 searchstudentButton = ttk.Button(leftFrame, text='Search Student', width=25, state=DISABLED, command=lambda: toplevel_date('Search Student', 'Search Student', search_data))
 searchstudentButton.grid(row=2, column=0, padx=10, pady=0)
 
-deletestudentButton = ttk.Button(leftFrame, text='Delete Student', width=25, state=DISABLED, command=delete_student)
+deletestudentButton = ttk.Button(leftFrame, text='Delete Student', width=25, state=DISABLED, command=lambda: delete_ops.delete_student(mycursor, con, student_table))
 deletestudentButton.grid(row=3, column=0, padx=10, pady=0)
 
 updatestudentButton = ttk.Button(leftFrame, text='Update Student', width=25, state=DISABLED, command=lambda: toplevel_date('Update Student', 'Update Student', update_data))
@@ -358,8 +347,10 @@ exportDataButton.grid(row=6, column=0, padx=10, pady=0)
 exitButton = ttk.Button(leftFrame, text='Exit', width=25, command=lambda: exit_ops.handle_exit(root))
 exitButton.grid(row=7, column=0, padx=10, pady=0)
 
+#####################################################
 rightframe = Frame(root, bg='white', relief=RIDGE)
 rightframe.place(x=320, y=70, width=800, height=550)
+#####################################################
 
 ScrollbarX = Scrollbar(rightframe, orient=HORIZONTAL)
 ScrollbarY = Scrollbar(rightframe, orient=VERTICAL)
@@ -389,7 +380,7 @@ student_table.heading('Added Date', text='Added Date')
 student_table.heading('Added Time', text='Added Time')
 
 student_table.column('ID', width=20, anchor=CENTER)
-student_table.column('Name', width=100, anchor=CENTER)
+student_table.column('Name', width=60, anchor=CENTER)
 student_table.column('Mobile No', width=60, anchor=CENTER)
 student_table.column('Email', width=60, anchor=CENTER)
 student_table.column('Address', width=60, anchor=CENTER)
